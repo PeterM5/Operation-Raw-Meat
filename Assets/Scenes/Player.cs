@@ -40,6 +40,16 @@ public class Player : MonoBehaviour
         }
 
         transform.position = pos;
+
+        if (Input.GetMouseButton(0))
+        {
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+
+            foreach (KeyValuePair<Vector3, GameObject> gunAndPosition in m_guns)
+            {
+                gunAndPosition.Value.GetComponent<Gun>().Shoot(mousePos);
+            }
+        }
     }
 
     void OnTriggerEnter2D(Collider2D col)
