@@ -5,13 +5,17 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float m_movementSpeed = 10;
+
     Dictionary<GameObject, Vector3> m_guns = new Dictionary<GameObject, Vector3>();
     Dictionary<GameObject, BoxCollider2D> m_addtionalColliders = new Dictionary<GameObject, BoxCollider2D>();
+
+    float m_timeOfLastShot;
+    public float m_shotInterval = 0.05f;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        m_timeOfLastShot = Time.time;
     }
 
     void FixedUpdate()
@@ -44,11 +48,16 @@ public class Player : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
-
-            foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+            if (Time.time > m_timeOfLastShot + m_shotInterval)
             {
-                gunAndPosition.Key.GetComponent<Gun>().Shoot(mousePos);
+                Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+
+                foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+                {
+                    gunAndPosition.Key.GetComponent<Gun>().Shoot(mousePos);
+                }
+
+                m_timeOfLastShot = Time.time;
             }
         }
     }
