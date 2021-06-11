@@ -5,8 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float m_movementSpeed = 10;
-    Dictionary<Vector3, GameObject> m_guns = new Dictionary<Vector3, GameObject>();
-    Dictionary<Vector3, BoxCollider2D> m_addtionalColliders = new Dictionary<Vector3, BoxCollider2D>();
+    Dictionary<GameObject, Vector3> m_guns = new Dictionary<GameObject, Vector3>();
+    Dictionary<GameObject, BoxCollider2D> m_addtionalColliders = new Dictionary<GameObject, BoxCollider2D>();
 
     // Start is called before the first frame update
     void Start()
@@ -18,9 +18,9 @@ public class Player : MonoBehaviour
     {
         Vector3 pos = transform.position;
 
-        foreach (KeyValuePair<Vector3, GameObject> gunAndPosition in m_guns)
+        foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
-            gunAndPosition.Value.transform.position = pos + gunAndPosition.Key;
+            gunAndPosition.Key.transform.position = pos + gunAndPosition.Value;
         }
 
         if (Input.GetKey("w"))
@@ -46,9 +46,9 @@ public class Player : MonoBehaviour
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
 
-            foreach (KeyValuePair<Vector3, GameObject> gunAndPosition in m_guns)
+            foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
             {
-                gunAndPosition.Value.GetComponent<Gun>().Shoot(mousePos);
+                gunAndPosition.Key.GetComponent<Gun>().Shoot(mousePos);
             }
         }
     }
@@ -65,8 +65,6 @@ public class Player : MonoBehaviour
             {
                 //Determine the position to pick up
                 Vector2 diff = transform.position - col.gameObject.transform.position;
-
-                Debug.Log(diff);
 
                 float x = diff.x;
                 if (x < 0)
@@ -110,23 +108,35 @@ public class Player : MonoBehaviour
 
     void addGun(Vector3 position, Gun newGun)
     {
-        if (!m_guns.ContainsKey(position))
+        if (!m_guns.ContainsKey(newGun.gameObject))
         {
-            m_guns.Add(position, newGun.gameObject);
+            m_guns.Add(newGun.gameObject, position);
             newGun.m_bOnGround = false;
+            newGun.m_player = gameObject.GetComponent<Player>();
 
             newGun.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
 
             BoxCollider2D boxCollider = gameObject.AddComponent<BoxCollider2D>();
             boxCollider.offset = position;
 
-            m_addtionalColliders.Add(position, boxCollider);
+            m_addtionalColliders.Add(newGun.gameObject, boxCollider);
         }
         
     }
 
-    void removeGun()
+    public void removeGun(Gun gun)
     {
+        //destroy gun
+        m_guns.Remove(gun.gameObject);
 
+        //Destroy extra box collider
+        BoxCollider2D boxCollider;
+        if (m_addtionalColliders.TryGetValue(gun.gameObject, out boxCollider))
+        {
+            Destroy(boxCollider);
+            m_addtionalColliders.Remove(gun.gameObject);
+        }
+
+        Destroy(gun.gameObject);
     }
 }

@@ -29,4 +29,12 @@ public class Gun : MonoBehaviour
     {
         
     }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.name.Contains("Enemy"))
+        {
+            m_player.removeGun(this);
+        }
+    }
 }
