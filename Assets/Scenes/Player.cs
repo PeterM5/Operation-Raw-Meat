@@ -17,6 +17,11 @@ public class Player : MonoBehaviour
     {
         Vector3 pos = transform.position;
 
+        foreach (KeyValuePair<Vector3, GameObject> gunAndPosition in m_guns)
+        {
+            gunAndPosition.Value.transform.position = pos + gunAndPosition.Key;
+        }
+
         if (Input.GetKey("w"))
         {
             pos.y += m_movementSpeed * Time.deltaTime;
@@ -35,11 +40,6 @@ public class Player : MonoBehaviour
         }
 
         transform.position = pos;
-
-        foreach(KeyValuePair<Vector3, GameObject> gunAndPosition in m_guns)
-        {
-            gunAndPosition.Value.transform.position = pos + gunAndPosition.Key;
-        }
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -103,6 +103,11 @@ public class Player : MonoBehaviour
         {
             m_guns.Add(position, newGun.gameObject);
             newGun.m_bOnGround = false;
+
+            newGun.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+
+            BoxCollider2D boxCollider = gameObject.AddComponent<BoxCollider2D>();
+            boxCollider.offset = position;
         }
         
     }
