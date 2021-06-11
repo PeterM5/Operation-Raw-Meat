@@ -7,6 +7,7 @@ public class Gun : MonoBehaviour
     public bool m_bOnGround = true;
     public GameObject m_bulletPrefab;
     public float m_bulletSpeed = 10;
+    public Player m_player;
 
     public void Shoot(Vector2 fireLocation)
     {

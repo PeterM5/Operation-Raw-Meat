@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     public float m_movementSpeed = 10;
     Dictionary<Vector3, GameObject> m_guns = new Dictionary<Vector3, GameObject>();
+    Dictionary<Vector3, BoxCollider2D> m_addtionalColliders = new Dictionary<Vector3, BoxCollider2D>();
 
     // Start is called before the first frame update
     void Start()
@@ -104,7 +105,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        
+        //todo check if enemy if so lower health/die
     }
 
     void addGun(Vector3 position, Gun newGun)
@@ -118,7 +119,14 @@ public class Player : MonoBehaviour
 
             BoxCollider2D boxCollider = gameObject.AddComponent<BoxCollider2D>();
             boxCollider.offset = position;
+
+            m_addtionalColliders.Add(position, boxCollider);
         }
         
+    }
+
+    void removeGun()
+    {
+
     }
 }
