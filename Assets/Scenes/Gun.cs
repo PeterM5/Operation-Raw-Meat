@@ -32,9 +32,60 @@ public class Gun : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
+                    /*
         if (col.gameObject.name.Contains("Enemy"))
         {
             m_player.removeGun(this);
         }
+        else if (col.gameObject.name.Contains("gun"))
+        {
+
+            Gun gun = col.gameObject.GetComponent<Gun>();
+
+            //Check its on the ground
+            if (gun.m_bOnGround)
+            {
+                //Determine the position to pick up
+                Vector2 diff = transform.position - col.gameObject.transform.position;
+
+                float x = diff.x;
+                if (x < 0)
+                {
+                    x = diff.x * -1;
+                }
+
+                float y = diff.y;
+                if (y < 0)
+                {
+                    y = diff.y * -1;
+                }
+
+                Debug.Log(m_player.transform.position);
+                Debug.Log("teehee");
+
+                if (x > y)
+                {
+                    if (diff.x > 0)//Left
+                    {
+                        m_player.addGun(m_player.transform.position - transform.position + new Vector3(-1.1f, 0), gun);
+                    }
+                    else//right
+                    {
+                        m_player.addGun(m_player.transform.position - transform.position + new Vector3(1.1f, 0), gun);
+                    }
+                }
+                else
+                {
+                    if (diff.y > 0)//Below
+                    {
+                        m_player.addGun(m_player.transform.position - transform.position + new Vector3(0, -1.1f), gun);
+                    }
+                    else//top
+                    {
+                        m_player.addGun(m_player.transform.position - transform.position + new Vector3(0, 1.1f), gun);
+                    }
+                }
+            }
+        }*/
     }
 }

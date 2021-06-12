@@ -115,7 +115,7 @@ public class Player : MonoBehaviour
         //todo check if enemy if so lower health/die
     }
 
-    void addGun(Vector3 position, Gun newGun)
+    public void addGun(Vector3 position, Gun newGun)
     {
         if (!m_guns.ContainsKey(newGun.gameObject))
         {
