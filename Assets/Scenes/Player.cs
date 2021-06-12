@@ -123,7 +123,7 @@ public class Player : MonoBehaviour
 
     public void addGun(Vector3 position, Gun newGun)
     {
-        if (!m_guns.ContainsValue(position))
+        if (!m_guns.ContainsValue(position) && !m_guns.ContainsKey(newGun.gameObject))
         {
             m_guns.Add(newGun.gameObject, position);
             newGun.m_bOnGround = false;
@@ -157,17 +157,16 @@ public class Player : MonoBehaviour
 
 
         //Remove disconnected guns
-
+        //Get list of connected guns
+        //Check agaisnt entire list of guns
+        //Disconnect non connected guns
 
         List<GameObject> connectedGuns = getConnectedGuns(new List<GameObject>(), transform.position, gun.gameObject, 0);
-        Debug.Log(connectedGuns.Count);
-
         List<GameObject> gunsToRemove = new List<GameObject>();
         foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
             if(!connectedGuns.Contains(gunAndPosition.Key))
-            {
-                Debug.Log("Deleting-----------------------------------------------------------------------");
+            {                
                 gunsToRemove.Add(gunAndPosition.Key);
             }      
         }
@@ -176,6 +175,7 @@ public class Player : MonoBehaviour
         {
             m_guns.Remove(gunToRemove);
             Destroy(gunToRemove);
+            //gunToRemove.GetComponent<Gun>().m_bOnGround = true;            
         }
     }
 
@@ -255,31 +255,4 @@ public class Player : MonoBehaviour
 
         return connectedGuns;
     }
-
-    bool isPlayerPosition(Vector3 position)
-    {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.5f);
-        foreach (Collider2D collider in colliders)
-        {
-            if (collider.gameObject.name.Contains("Player"))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool isGunPosition(Vector3 position)
-    {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.5f);
-        foreach (Collider2D collider in colliders)
-        {
-            if (collider.gameObject.name.Contains("gun"))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }
