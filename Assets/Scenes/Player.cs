@@ -155,7 +155,7 @@ public class Player : MonoBehaviour
 
 
 
-
+        //Remove disconnected guns
         foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
             if (!isConnectedToPlayer(gunAndPosition.Value, 0))
@@ -180,49 +180,49 @@ public class Player : MonoBehaviour
             return true;
         }
 
-        if (isPlayerPosition(position + new Vector3(1.3f, 0, 0)))
+        if (isPlayerPosition(position + new Vector3(1.1f, 0, 0)))
         {
             return true;
         }
-        if (isGunPosition(position + new Vector3(1.3f, 0, 0)))
+        if (isGunPosition(position + new Vector3(1.1f, 0, 0)))
         {
-            if (isConnectedToPlayer(position + new Vector3(1.3f, 0, 0), depth))
+            if (isConnectedToPlayer(position + new Vector3(1.1f, 0, 0), depth))
             {
                 return true;
             }
         }
 
-        if (isPlayerPosition(position + new Vector3(-1.3f, 0, 0)))
+        if (isPlayerPosition(position + new Vector3(-1.1f, 0, 0)))
         {
             return true;
         }
-        if (isGunPosition(position + new Vector3(-1.3f, 0, 0)))
+        if (isGunPosition(position + new Vector3(-1.1f, 0, 0)))
         {
-            if (isConnectedToPlayer(position + new Vector3(-1.3f, 0, 0), depth))
+            if (isConnectedToPlayer(position + new Vector3(-1.1f, 0, 0), depth))
             {
                 return true;
             }
         }
 
-        if (isPlayerPosition(position + new Vector3(0, 1.3f, 0)))
+        if (isPlayerPosition(position + new Vector3(0, 1.1f, 0)))
         {
             return true;
         }
-        if (isGunPosition(position + new Vector3(0, 1.3f, 0)))
+        if (isGunPosition(position + new Vector3(0, 1.1f, 0)))
         {
-            if (isConnectedToPlayer(position + new Vector3(0, 1.3f, 0), depth))
+            if (isConnectedToPlayer(position + new Vector3(0, 1.1f, 0), depth))
             {
                 return true;
             }
         }
 
-        if (isPlayerPosition(position + new Vector3(0, -1.3f, 0)))
+        if (isPlayerPosition(position + new Vector3(0, -1.1f, 0)))
         {
             return true;
         }
-        if (isGunPosition(position + new Vector3(0, -1.3f, 0)))
+        if (isGunPosition(position + new Vector3(0, -1.1f, 0)))
         {
-            if (isConnectedToPlayer(position + new Vector3(0, -1.3f, 0), depth))
+            if (isConnectedToPlayer(position + new Vector3(0, -1.1f, 0), depth))
             {
                 return true;
             }
@@ -256,59 +256,5 @@ public class Player : MonoBehaviour
         }
         return false;
     }
-
-
-    List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position, int depth)
-    {
-        depth += 1;
-
-        if (depth > 10)
-            return connectedGuns;
-
-        GameObject gunRight = getNeighbouringGun(position + new Vector3(1.3f, 0, 0));
-        if (gunRight != null)
-        {
-            connectedGuns.Add(gunRight);
-            connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(1.3f, 0, 0), depth);
-        }
-
-        GameObject gunLeft = getNeighbouringGun(position + new Vector3(-1.3f, 0, 0));
-        if (gunLeft != null)
-        {
-            connectedGuns.Add(gunLeft);
-            connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(-1.3f, 0, 0), depth);
-        }
-
-        GameObject gunUp = getNeighbouringGun(position + new Vector3(0, 1.3f, 0));
-        if (gunUp != null)
-        {
-            connectedGuns.Add(gunUp);
-            connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, 1.3f, 0), depth);
-        }
-
-        GameObject gunBelow = getNeighbouringGun(position + new Vector3(0, -1.3f, 0));
-        if (gunBelow != null)
-        {
-            connectedGuns.Add(gunBelow);
-            connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, -1.3f, 0), depth);
-        }
-
-        return connectedGuns;
-    }
-
-    GameObject getNeighbouringGun(Vector3 position)
-    {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 1);
-
-        foreach (Collider2D collider in colliders)
-        {
-            if (collider.gameObject.name.Contains("gun"))
-            {
-                return collider.gameObject;
-            }
-        }
-        return null;
-    }
-
 
 }
