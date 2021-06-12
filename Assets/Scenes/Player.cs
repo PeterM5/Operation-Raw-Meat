@@ -159,7 +159,7 @@ public class Player : MonoBehaviour
         //Remove disconnected guns
 
 
-        List<GameObject> connectedGuns = getConnectedGuns(new List<GameObject>(), transform.position, 0);
+        List<GameObject> connectedGuns = getConnectedGuns(new List<GameObject>(), transform.position, gun.gameObject, 0);
         Debug.Log(connectedGuns.Count);
 
         List<GameObject> gunsToRemove = new List<GameObject>();
@@ -179,7 +179,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position, int depth)
+    List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position, GameObject deletedGameObject, int depth)
     {
         depth++;
 
@@ -193,11 +193,15 @@ public class Player : MonoBehaviour
         {
             if (collider.gameObject.name.Contains("Gun"))
             {
-                if(!connectedGuns.Contains(collider.gameObject))
+                if (collider.gameObject != deletedGameObject)
                 {
-                    connectedGuns.Add(collider.gameObject);
-                }                
-                connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(1.1f, 0), depth);
+                    if (!connectedGuns.Contains(collider.gameObject))
+                    {
+                        connectedGuns.Add(collider.gameObject);
+                    }
+                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(1.1f, 0), deletedGameObject, depth);
+                }
+                
             }
         }
 
@@ -206,11 +210,14 @@ public class Player : MonoBehaviour
         {
             if (collider.gameObject.name.Contains("Gun"))
             {
-                if (!connectedGuns.Contains(collider.gameObject))
+                if(collider.gameObject != deletedGameObject)
                 {
-                    connectedGuns.Add(collider.gameObject);
-                }
-                connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(-1.1f, 0), depth);
+                    if (!connectedGuns.Contains(collider.gameObject))
+                    {
+                        connectedGuns.Add(collider.gameObject);
+                    }
+                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(-1.1f, 0), deletedGameObject, depth);
+                }                
             }
         }
 
@@ -219,11 +226,14 @@ public class Player : MonoBehaviour
         {
             if (collider.gameObject.name.Contains("Gun"))
             {
-                if (!connectedGuns.Contains(collider.gameObject))
+                if (collider.gameObject != deletedGameObject)
                 {
-                    connectedGuns.Add(collider.gameObject);
-                }
-                connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, 1.1f), depth);
+                    if (!connectedGuns.Contains(collider.gameObject))
+                    {
+                        connectedGuns.Add(collider.gameObject);
+                    }
+                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, 1.1f), deletedGameObject, depth);
+                }                
             }
         }
 
@@ -232,11 +242,14 @@ public class Player : MonoBehaviour
         {
             if (collider.gameObject.name.Contains("Gun"))
             {
-                if (!connectedGuns.Contains(collider.gameObject))
+                if (collider.gameObject != deletedGameObject)
                 {
-                    connectedGuns.Add(collider.gameObject);
-                }
-                connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, -1.1f), depth);
+                    if (!connectedGuns.Contains(collider.gameObject))
+                    {
+                        connectedGuns.Add(collider.gameObject);
+                    }
+                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, -1.1f), deletedGameObject, depth);
+                }               
             }
         }
 
