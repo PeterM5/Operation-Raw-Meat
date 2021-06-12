@@ -15,4 +15,12 @@ public class Enemy : MonoBehaviour
     {
         
     }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.name.Contains("Bullet"))
+        {
+            Destroy(gameObject);
+        }
+    }
 }
