@@ -154,17 +154,21 @@ public class Player : MonoBehaviour
         Destroy(gun.gameObject);
 
 
-
         //Remove disconnected guns
+        List<GameObject> gunsToRemove = new List<GameObject>();
         foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
             if (!isConnectedToPlayer(gunAndPosition.Value, 0))
             {
                 Debug.Log("Deleting-----------------------------------------------------------------------");
-                GameObject gunToDestroy = gunAndPosition.Key;
-                m_guns.Remove(gunToDestroy);
-                Destroy(gunToDestroy);
+                gunsToRemove.Add(gunAndPosition.Key);
             }          
+        }
+
+        foreach(GameObject gunToRemove in gunsToRemove)
+        {
+            m_guns.Remove(gunToRemove);
+            Destroy(gunToRemove);
         }
     }
 
@@ -173,14 +177,18 @@ public class Player : MonoBehaviour
     {
         depth++;
         if (depth > 10)
+        {
+            Debug.Log("Depth error");
             return false;
+        }
+            
 
         if (isPlayerPosition(position))
         {
             return true;
         }
 
-        if (isPlayerPosition(position + new Vector3(1.1f, 0, 0)))
+        if (isPlayerPosition(position + new Vector3(0.5f, 0, 0)))
         {
             return true;
         }
@@ -233,7 +241,7 @@ public class Player : MonoBehaviour
 
     bool isPlayerPosition(Vector3 position)
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 1);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.5f);
         foreach (Collider2D collider in colliders)
         {
             if (collider.gameObject.name.Contains("Player"))
@@ -246,7 +254,7 @@ public class Player : MonoBehaviour
 
     bool isGunPosition(Vector3 position)
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 1);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.5f);
         foreach (Collider2D collider in colliders)
         {
             if (collider.gameObject.name.Contains("gun"))
