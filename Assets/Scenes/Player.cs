@@ -151,20 +151,108 @@ public class Player : MonoBehaviour
 
 
 
-        //Check for seperated guns by gathering a list of non seperated guns
-        List<GameObject> connectedGuns = new List<GameObject>();
-        connectedGuns = getConnectedGuns(connectedGuns, transform.position, 0);
 
         foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
-            if (!connectedGuns.Contains(gunAndPosition.Key))
+            if (!isConnectedToPlayer(gunAndPosition.Value, 0))
             {
+                Debug.Log("Deleting-----------------------------------------------------------------------");
                 GameObject gunToDestroy = gunAndPosition.Key;
                 m_guns.Remove(gunToDestroy);
                 Destroy(gunToDestroy);
             }          
         }
     }
+
+
+    bool isConnectedToPlayer(Vector3 position, int depth)
+    {
+        depth++;
+        if (depth > 10)
+            return false;
+
+        if (isPlayerPosition(position))
+        {
+            return true;
+        }
+
+        if (isPlayerPosition(position + new Vector3(1.3f, 0, 0)))
+        {
+            return true;
+        }
+        if (isGunPosition(position + new Vector3(1.3f, 0, 0)))
+        {
+            if (isConnectedToPlayer(position + new Vector3(1.3f, 0, 0), depth))
+            {
+                return true;
+            }
+        }
+
+        if (isPlayerPosition(position + new Vector3(-1.3f, 0, 0)))
+        {
+            return true;
+        }
+        if (isGunPosition(position + new Vector3(-1.3f, 0, 0)))
+        {
+            if (isConnectedToPlayer(position + new Vector3(-1.3f, 0, 0), depth))
+            {
+                return true;
+            }
+        }
+
+        if (isPlayerPosition(position + new Vector3(0, 1.3f, 0)))
+        {
+            return true;
+        }
+        if (isGunPosition(position + new Vector3(0, 1.3f, 0)))
+        {
+            if (isConnectedToPlayer(position + new Vector3(0, 1.3f, 0), depth))
+            {
+                return true;
+            }
+        }
+
+        if (isPlayerPosition(position + new Vector3(0, -1.3f, 0)))
+        {
+            return true;
+        }
+        if (isGunPosition(position + new Vector3(0, -1.3f, 0)))
+        {
+            if (isConnectedToPlayer(position + new Vector3(0, -1.3f, 0), depth))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool isPlayerPosition(Vector3 position)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 1);
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.gameObject.name.Contains("Player"))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool isGunPosition(Vector3 position)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 1);
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.gameObject.name.Contains("gun"))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position, int depth)
     {
