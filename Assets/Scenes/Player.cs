@@ -21,13 +21,16 @@ public class Player : MonoBehaviour
         m_rigidBody = GetComponent<Rigidbody>();
     }
 
-    void FixedUpdate()
+    void Update()
     {
         foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
             gunAndPosition.Key.transform.position = transform.position + gunAndPosition.Value;
         }
+    }
 
+    void FixedUpdate()
+    {
         if (Input.GetKey(KeyCode.W))
         {
             m_rigidBody.AddForce(new Vector3(0.0f, m_movementSpeed, 0.0f));
@@ -63,8 +66,6 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider col)
     {
-        Debug.Log("Enter");
-
         //Check if gun
         if (col.gameObject.name.Contains("Gun"))
         {

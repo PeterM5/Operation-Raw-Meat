@@ -31,15 +31,14 @@ public class Gun : MonoBehaviour
         
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.name.Contains("Enemy"))
         {
             m_player.removeGun(this);
         }
-        else if (col.gameObject.name.Contains("gun"))
+        else if (col.gameObject.name.Contains("Gun"))
         {
-
             Gun gun = col.gameObject.GetComponent<Gun>();
 
             //Check its on the ground
