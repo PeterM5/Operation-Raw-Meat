@@ -7,6 +7,8 @@ public class Bullet : MonoBehaviour
     public float m_lifeTime = 5;
     float m_spawnTime;
 
+    //Note: bullet only does damage after a certain amount of time
+
     // Start is called before the first frame update
     void Start()
     {

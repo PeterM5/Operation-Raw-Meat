@@ -154,26 +154,51 @@ public class Player : MonoBehaviour
         Destroy(gun.gameObject);
 
 
+        //List<GameObject> connectedGuns;
 
         //Remove disconnected guns
+        /*
+        List<GameObject> gunsToRemove = new List<GameObject>();
         foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
-            if (!isConnectedToPlayer(gunAndPosition.Value, 0))
+            if (!isConnectedToPlayer(transform.position + gunAndPosition.Value, 0))
             {
                 Debug.Log("Deleting-----------------------------------------------------------------------");
-                GameObject gunToDestroy = gunAndPosition.Key;
-                m_guns.Remove(gunToDestroy);
-                Destroy(gunToDestroy);
+                gunsToRemove.Add(gunAndPosition.Key);
             }          
         }
+
+        foreach(GameObject gunToRemove in gunsToRemove)
+        {
+            m_guns.Remove(gunToRemove);
+            Destroy(gunToRemove);
+        }*/
     }
 
+    /*List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position)
+    {
+
+        //todo
+
+
+        if (isGunPosition(position + new Vector3(1.1f, 0, 0)))
+        {
+            if (isConnectedToPlayer(position + new Vector3(1.1f, 0, 0), depth))
+            {
+                return true;
+            }
+        }
+    }
 
     bool isConnectedToPlayer(Vector3 position, int depth)
     {
         depth++;
         if (depth > 10)
+        {
+            Debug.Log("Depth error");
             return false;
+        }
+            
 
         if (isPlayerPosition(position))
         {
@@ -233,7 +258,7 @@ public class Player : MonoBehaviour
 
     bool isPlayerPosition(Vector3 position)
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 1);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.5f);
         foreach (Collider2D collider in colliders)
         {
             if (collider.gameObject.name.Contains("Player"))
@@ -246,7 +271,7 @@ public class Player : MonoBehaviour
 
     bool isGunPosition(Vector3 position)
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 1);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.5f);
         foreach (Collider2D collider in colliders)
         {
             if (collider.gameObject.name.Contains("gun"))
@@ -255,6 +280,6 @@ public class Player : MonoBehaviour
             }
         }
         return false;
-    }
+    }*/
 
 }
