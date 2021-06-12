@@ -7,44 +7,43 @@ public class Player : MonoBehaviour
     public float m_movementSpeed = 10;
 
     Dictionary<GameObject, Vector3> m_guns = new Dictionary<GameObject, Vector3>();
-    Dictionary<GameObject, BoxCollider2D> m_addtionalColliders = new Dictionary<GameObject, BoxCollider2D>();
+    Dictionary<GameObject, BoxCollider> m_addtionalColliders = new Dictionary<GameObject, BoxCollider>();
 
     float m_timeOfLastShot;
     public float m_shotInterval = 0.05f;
+
+    private Rigidbody m_rigidBody;
 
     // Start is called before the first frame update
     void Start()
     {
         m_timeOfLastShot = Time.time;
+        m_rigidBody = GetComponent<Rigidbody>();
     }
 
     void FixedUpdate()
     {
-        Vector3 pos = transform.position;
-
         foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
-            gunAndPosition.Key.transform.position = pos + gunAndPosition.Value;
+            gunAndPosition.Key.transform.position = transform.position + gunAndPosition.Value;
         }
 
-        if (Input.GetKey("w"))
+        if (Input.GetKey(KeyCode.W))
         {
-            pos.y += m_movementSpeed * Time.deltaTime;
+            m_rigidBody.AddForce(new Vector3(0.0f, m_movementSpeed, 0.0f));
         }
-        if (Input.GetKey("s"))
+        if (Input.GetKey(KeyCode.S))
         {
-            pos.y -= m_movementSpeed * Time.deltaTime;
+            m_rigidBody.AddForce(new Vector3(0.0f, -m_movementSpeed, 0.0f));
         }
-        if (Input.GetKey("d"))
+        if (Input.GetKey(KeyCode.A))
         {
-            pos.x += m_movementSpeed * Time.deltaTime;
+            m_rigidBody.AddForce(new Vector3(-m_movementSpeed, 0.0f, 0.0f));
         }
-        if (Input.GetKey("a"))
+        if (Input.GetKey(KeyCode.D))
         {
-            pos.x -= m_movementSpeed * Time.deltaTime;
+            m_rigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
         }
-
-        transform.position = pos;
 
         if (Input.GetMouseButton(0))
         {
@@ -62,10 +61,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    private void OnTriggerEnter(Collider col)
     {
+        Debug.Log("Enter");
+
         //Check if gun
-        if(col.gameObject.name.Contains("gun"))
+        if (col.gameObject.name.Contains("Gun"))
         {
             Gun gun = col.gameObject.GetComponent<Gun>();
 
@@ -89,15 +90,15 @@ public class Player : MonoBehaviour
 
                 if (x > y)
                 {
-                    if(diff.x > 0)//Left
+                    if (diff.x > 0)//Left
                     {
                         gun.m_offset = new Vector3(-1.1f, 0);
-                        addGun(gun.m_offset, gun);                        
+                        addGun(gun.m_offset, gun);
                     }
                     else//right
                     {
                         gun.m_offset = new Vector3(1.1f, 0);
-                        addGun(gun.m_offset, gun);                        
+                        addGun(gun.m_offset, gun);
                     }
                 }
                 else
@@ -105,14 +106,14 @@ public class Player : MonoBehaviour
                     if (diff.y > 0)//Below
                     {
                         gun.m_offset = new Vector3(0, -1.1f);
-                        addGun(gun.m_offset, gun);                        
+                        addGun(gun.m_offset, gun);
                     }
                     else//top
                     {
                         gun.m_offset = new Vector3(0, 1.1f);
                         addGun(gun.m_offset, gun);
                     }
-                }                
+                }
             }
         }
 
@@ -127,10 +128,10 @@ public class Player : MonoBehaviour
             newGun.m_bOnGround = false;
             newGun.m_player = gameObject.GetComponent<Player>();
 
-            newGun.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            newGun.gameObject.GetComponent<BoxCollider>().isTrigger = true;
 
-            BoxCollider2D boxCollider = gameObject.AddComponent<BoxCollider2D>();
-            boxCollider.offset = position;
+            BoxCollider boxCollider = gameObject.AddComponent<BoxCollider>();
+            boxCollider.center = position;
 
             m_addtionalColliders.Add(newGun.gameObject, boxCollider);
         }
@@ -144,7 +145,7 @@ public class Player : MonoBehaviour
         m_guns.Remove(gun.gameObject);
 
         //Destroy extra box collider
-        BoxCollider2D boxCollider;
+        BoxCollider boxCollider;
         if (m_addtionalColliders.TryGetValue(gun.gameObject, out boxCollider))
         {
             Destroy(boxCollider);
