@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class Player : MonoBehaviour
     private float m_timeOfLastSuitChange;
     public float m_suitChangeInterval = 0.1f;
     public float m_distanceToGetBackInSuit = 2f;
+    public Slider m_outOfSuitProgressBar;
+    public float m_maxOutOfSuitTime = 30;
+    private float m_outOfSuitTimeLeft;
 
     public GameObject m_playerBody;
     private Rigidbody m_playerBodyRigidBody;
@@ -30,6 +34,8 @@ public class Player : MonoBehaviour
         m_timeOfLastSuitChange = Time.time;
         m_rigidBody = GetComponent<Rigidbody>();
         m_playerBodyRigidBody = m_playerBody.GetComponent<Rigidbody>();
+        m_outOfSuitProgressBar.gameObject.SetActive(false);
+        m_outOfSuitTimeLeft = m_maxOutOfSuitTime;
     }
 
     void Update()
@@ -84,6 +90,16 @@ public class Player : MonoBehaviour
             {
                 m_playerBodyRigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
             }
+
+            //Calculate remaingn time out of suit
+            m_outOfSuitTimeLeft -= Time.deltaTime;
+            float fractionTimeLeft = (m_outOfSuitTimeLeft / m_maxOutOfSuitTime);
+            m_outOfSuitProgressBar.value = fractionTimeLeft;
+
+            if (m_outOfSuitTimeLeft < 0)
+            {
+                //todo die
+            }
         }
 
         //Toggle getting in/out of suit
@@ -96,11 +112,13 @@ public class Player : MonoBehaviour
                 if (distanceBetweenPlayerAndSuit.x < m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.x > -m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.y < m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.y > -m_distanceToGetBackInSuit)
                 {
                     m_bOutOfSuit = false;
+                    m_outOfSuitProgressBar.gameObject.SetActive(false);
                 }
             }
             else
             {
                 m_bOutOfSuit = true;
+                m_outOfSuitProgressBar.gameObject.SetActive(true);
             }            
             m_timeOfLastSuitChange = Time.time;
         }
