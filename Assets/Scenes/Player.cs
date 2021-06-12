@@ -149,47 +149,74 @@ public class Player : MonoBehaviour
 
         Destroy(gun.gameObject);
 
-        //Check if lone gun has occured
-        Vector3 gunRelativeLocation;
-        if (m_guns.TryGetValue(gun.gameObject, out gunRelativeLocation))
-        {
-            foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
-            {
-                if (foundNeighbouringGun(gunAndPosition.Value + new Vector3(1, 0, 0)))
-                {
-                    continue;
-                }
-                if (foundNeighbouringGun(gunAndPosition.Value + new Vector3(-1, 0, 0)))
-                {
-                    continue;
-                }
-                if (foundNeighbouringGun(gunAndPosition.Value + new Vector3(0, 1, 0)))
-                {
-                    continue;
-                }
-                if (foundNeighbouringGun(gunAndPosition.Value + new Vector3(0, -1, 0)))
-                {
-                    continue;
-                }
 
-                GameObject gunGameObject = gunAndPosition.Key;
-                m_guns.Remove(gunGameObject);
-                Destroy(gunGameObject);
-            }
+
+        //Check for seperated guns by gathering a list of non seperated guns
+        List<GameObject> connectedGuns = new List<GameObject>();
+        connectedGuns = getConnectedGuns(connectedGuns, transform.position, 0);
+
+        foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+        {
+            if (!connectedGuns.Contains(gunAndPosition.Key))
+            {
+                GameObject gunToDestroy = gunAndPosition.Key;
+                m_guns.Remove(gunToDestroy);
+                Destroy(gunToDestroy);
+            }          
         }
     }
 
-    bool foundNeighbouringGun(Vector3 position)
+    List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position, int depth)
+    {
+        depth += 1;
+
+        if (depth > 10)
+            return connectedGuns;
+
+        GameObject gunRight = getNeighbouringGun(position + new Vector3(1.3f, 0, 0));
+        if (gunRight != null)
+        {
+            connectedGuns.Add(gunRight);
+            connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(1.3f, 0, 0), depth);
+        }
+
+        GameObject gunLeft = getNeighbouringGun(position + new Vector3(-1.3f, 0, 0));
+        if (gunLeft != null)
+        {
+            connectedGuns.Add(gunLeft);
+            connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(-1.3f, 0, 0), depth);
+        }
+
+        GameObject gunUp = getNeighbouringGun(position + new Vector3(0, 1.3f, 0));
+        if (gunUp != null)
+        {
+            connectedGuns.Add(gunUp);
+            connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, 1.3f, 0), depth);
+        }
+
+        GameObject gunBelow = getNeighbouringGun(position + new Vector3(0, -1.3f, 0));
+        if (gunBelow != null)
+        {
+            connectedGuns.Add(gunBelow);
+            connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, -1.3f, 0), depth);
+        }
+
+        return connectedGuns;
+    }
+
+    GameObject getNeighbouringGun(Vector3 position)
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 1);
 
         foreach (Collider2D collider in colliders)
         {
-            if(collider.gameObject.name.Contains("gun"))
+            if (collider.gameObject.name.Contains("gun"))
             {
-                return true;
+                return collider.gameObject;
             }
         }
-        return false;
+        return null;
     }
+
+
 }
