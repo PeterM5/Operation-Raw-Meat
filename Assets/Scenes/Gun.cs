@@ -13,8 +13,6 @@ public class Gun : MonoBehaviour
     public void Shoot(Vector2 fireLocation)
     {
         Vector3 diff = new Vector3(fireLocation.x, fireLocation.y, 0) - transform.position;
-        Debug.Log(diff);
-        Debug.Log(fireLocation);
 
         GameObject newBullet = Instantiate(m_bulletPrefab, transform.position, Quaternion.identity);
         newBullet.GetComponent<Rigidbody>().AddForce(diff * m_bulletSpeed);

@@ -156,106 +156,91 @@ public class Player : MonoBehaviour
         Destroy(gun.gameObject);
 
 
-        //List<GameObject> connectedGuns;
-
         //Remove disconnected guns
-        /*
+
+
+        List<GameObject> connectedGuns = getConnectedGuns(new List<GameObject>(), transform.position, 0);
+        Debug.Log(connectedGuns.Count);
+
         List<GameObject> gunsToRemove = new List<GameObject>();
         foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
-            if (!isConnectedToPlayer(transform.position + gunAndPosition.Value, 0))
+            if(!connectedGuns.Contains(gunAndPosition.Key))
             {
                 Debug.Log("Deleting-----------------------------------------------------------------------");
                 gunsToRemove.Add(gunAndPosition.Key);
-            }          
+            }      
         }
 
         foreach(GameObject gunToRemove in gunsToRemove)
         {
             m_guns.Remove(gunToRemove);
             Destroy(gunToRemove);
-        }*/
-    }
-
-    /*List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position)
-    {
-
-        //todo
-
-
-        if (isGunPosition(position + new Vector3(1.1f, 0, 0)))
-        {
-            if (isConnectedToPlayer(position + new Vector3(1.1f, 0, 0), depth))
-            {
-                return true;
-            }
         }
     }
 
-    bool isConnectedToPlayer(Vector3 position, int depth)
+    List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position, int depth)
     {
         depth++;
-        if (depth > 10)
-        {
-            Debug.Log("Depth error");
-            return false;
-        }
-            
 
-        if (isPlayerPosition(position))
+        if(depth > 10)
         {
-            return true;
+            return connectedGuns;
         }
 
-        if (isPlayerPosition(position + new Vector3(1.1f, 0, 0)))
+        Collider[] colliders = Physics.OverlapSphere(position + new Vector3(1.1f, 0), 0.5f);
+        foreach (Collider collider in colliders)
         {
-            return true;
-        }
-        if (isGunPosition(position + new Vector3(1.1f, 0, 0)))
-        {
-            if (isConnectedToPlayer(position + new Vector3(1.1f, 0, 0), depth))
+            if (collider.gameObject.name.Contains("Gun"))
             {
-                return true;
+                if(!connectedGuns.Contains(collider.gameObject))
+                {
+                    connectedGuns.Add(collider.gameObject);
+                }                
+                connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(1.1f, 0), depth);
             }
         }
 
-        if (isPlayerPosition(position + new Vector3(-1.1f, 0, 0)))
+        colliders = Physics.OverlapSphere(position + new Vector3(-1.1f, 0), 0.5f);
+        foreach (Collider collider in colliders)
         {
-            return true;
-        }
-        if (isGunPosition(position + new Vector3(-1.1f, 0, 0)))
-        {
-            if (isConnectedToPlayer(position + new Vector3(-1.1f, 0, 0), depth))
+            if (collider.gameObject.name.Contains("Gun"))
             {
-                return true;
+                if (!connectedGuns.Contains(collider.gameObject))
+                {
+                    connectedGuns.Add(collider.gameObject);
+                }
+                connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(-1.1f, 0), depth);
             }
         }
 
-        if (isPlayerPosition(position + new Vector3(0, 1.1f, 0)))
+        colliders = Physics.OverlapSphere(position + new Vector3(0, 1.1f), 0.5f);
+        foreach (Collider collider in colliders)
         {
-            return true;
-        }
-        if (isGunPosition(position + new Vector3(0, 1.1f, 0)))
-        {
-            if (isConnectedToPlayer(position + new Vector3(0, 1.1f, 0), depth))
+            if (collider.gameObject.name.Contains("Gun"))
             {
-                return true;
+                if (!connectedGuns.Contains(collider.gameObject))
+                {
+                    connectedGuns.Add(collider.gameObject);
+                }
+                connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, 1.1f), depth);
             }
         }
 
-        if (isPlayerPosition(position + new Vector3(0, -1.1f, 0)))
+        colliders = Physics.OverlapSphere(position + new Vector3(0, -1.1f), 0.5f);
+        foreach (Collider collider in colliders)
         {
-            return true;
-        }
-        if (isGunPosition(position + new Vector3(0, -1.1f, 0)))
-        {
-            if (isConnectedToPlayer(position + new Vector3(0, -1.1f, 0), depth))
+            if (collider.gameObject.name.Contains("Gun"))
             {
-                return true;
+                if (!connectedGuns.Contains(collider.gameObject))
+                {
+                    connectedGuns.Add(collider.gameObject);
+                }
+                connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, -1.1f), depth);
             }
         }
 
-        return false;
+        return connectedGuns;
     }
 
     bool isPlayerPosition(Vector3 position)
@@ -282,6 +267,6 @@ public class Player : MonoBehaviour
             }
         }
         return false;
-    }*/
+    }
 
 }
