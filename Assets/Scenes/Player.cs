@@ -135,6 +135,7 @@ public class Player : MonoBehaviour
 
     public void removeGun(Gun gun)
     {
+
         //destroy gun
         m_guns.Remove(gun.gameObject);
 
@@ -147,5 +148,48 @@ public class Player : MonoBehaviour
         }
 
         Destroy(gun.gameObject);
+
+        //Check if lone gun has occured
+        Vector3 gunRelativeLocation;
+        if (m_guns.TryGetValue(gun.gameObject, out gunRelativeLocation))
+        {
+            foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+            {
+                if (foundNeighbouringGun(gunAndPosition.Value + new Vector3(1, 0, 0)))
+                {
+                    continue;
+                }
+                if (foundNeighbouringGun(gunAndPosition.Value + new Vector3(-1, 0, 0)))
+                {
+                    continue;
+                }
+                if (foundNeighbouringGun(gunAndPosition.Value + new Vector3(0, 1, 0)))
+                {
+                    continue;
+                }
+                if (foundNeighbouringGun(gunAndPosition.Value + new Vector3(0, -1, 0)))
+                {
+                    continue;
+                }
+
+                GameObject gunGameObject = gunAndPosition.Key;
+                m_guns.Remove(gunGameObject);
+                Destroy(gunGameObject);
+            }
+        }
+    }
+
+    bool foundNeighbouringGun(Vector3 position)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 1);
+
+        foreach (Collider2D collider in colliders)
+        {
+            if(collider.gameObject.name.Contains("gun"))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
