@@ -5,8 +5,11 @@ using UnityEngine.UI;
 
 public class Minimap : MonoBehaviour
 {
-    public Sprite room_11;
-    public Sprite room_22;
+    public Sprite sprite_normal;
+    public Sprite sprite_spawn;
+    public Sprite sprite_coin;
+    public Sprite sprite_boss;
+
     public void DrawMap(Dictionary<Vector2Int, Room> mapLayout) {
         // Delete all previously generated map objects
         var children = new List<GameObject>();
@@ -33,16 +36,30 @@ public class Minimap : MonoBehaviour
 
             room_icon_obj.AddComponent<CanvasRenderer>();
             Image i = room_icon_obj.AddComponent<Image>();
-            if (room_obj.GetRoomSize().x == 1 && room_obj.GetRoomSize().y == 1) {
-                i.sprite = room_11;
-                rt.sizeDelta = new Vector2(16f, 16f);
-                rt.localPosition = new Vector3(room_pos.x * 16f - (minimap_width / 2), room_pos.y * 16f - (minimap_height / 2), 0.0f);
+            
+            switch (room_obj.GetRoomType()) {
+                case RoomType.Normal: 
+                    i.sprite = sprite_normal;
+                    break;
+                case RoomType.Spawn: 
+                    i.sprite = sprite_spawn;
+                    break;
+                case RoomType.Coin: 
+                    i.sprite = sprite_coin;
+                    break;
+                case RoomType.Boss: 
+                    i.sprite = sprite_boss;
+                    break;
             }
+            rt.sizeDelta = new Vector2(16f, 16f);
+            rt.localPosition = new Vector3(room_pos.x * 16f - (minimap_width / 2), room_pos.y * 16f - (minimap_height / 2), 0.0f);
+            /*
             else if (room_obj.GetRoomSize().x == 2 && room_obj.GetRoomSize().y == 2) {
                 i.sprite = room_22;
                 rt.sizeDelta = new Vector2(32f, 32f);
                 rt.localPosition = new Vector3(room_pos.x * 16f - (minimap_width / 2) + 8, room_pos.y * 16f - (minimap_height / 2) + 8, 0.0f);
             }
+            */
         }
     }
 }
