@@ -64,17 +64,19 @@ public class PlayerController : MonoBehaviour
             
             // Calculate distance between Item and Player
             float distance = Vector3.Distance(item_transform.position, transform.position);
-
             if (distance < magnet_radius) {
                 Vector3 force_vector = (transform.position - item_transform.position) * magnet_force / distance;
                 item_rb.AddForce(force_vector);
             }
 
+            // Check if item is close enough to player
+            
             if (distance < collection_radius) {
                 // Join object
                 Item item = item_obj.GetComponent<Item>();
-                AttachItem(new Vector2Int(-1, 0), item.type)
+                AttachItem(new Vector2Int(-1, 0), item.type);
             }
+            
 
         }
     }
@@ -86,7 +88,6 @@ public class PlayerController : MonoBehaviour
         // Create GameObject
         switch (item_type) {
             case ItemType.Gun:
-
                 break;
             case ItemType.Shield:
                 break;
