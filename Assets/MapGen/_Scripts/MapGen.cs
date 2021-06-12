@@ -10,10 +10,15 @@ public class MapGen : MonoBehaviour
     public int max_no_rooms;
     public bool autoUpdate;
     private Minimap minimap;
+    
+    public GameObject room1;
+
+    public Transform map_parent;
     // Start is called before the first frame update
     void Start()
     {
         generateMap11();
+        spawnRoomObjects();
     }
 
     // Update is called once per frame
@@ -138,6 +143,30 @@ public class MapGen : MonoBehaviour
             adjacent[r] = tmp;
         }
         return adjacent;
+    }
+    
+    void spawnRoomObjects() {
+        foreach(KeyValuePair<Vector2Int, Room> cell in mapLayout) {
+            GameObject r = GameObject.Instantiate(room1, new Vector3(cell.Key.x * 20, cell.Key.y * 20, 0.0f), room1.transform.rotation, map_parent);
+            // Check adjacent rooms and remove doors to them
+            if (mapLayout.ContainsKey(cell.Key + new Vector2Int(1,0))) { // East
+                // Remove east door
+                Destroy(r.transform.Find("East_Door").gameObject);
+            }
+            if (mapLayout.ContainsKey(cell.Key + new Vector2Int(-1,0))) { // West 
+                // Remove west door
+                Destroy(r.transform.Find("West_Door").gameObject);
+            }
+            if (mapLayout.ContainsKey(cell.Key + new Vector2Int(0,1))) { // North 
+                // Remove north door
+                Destroy(r.transform.Find("North_Door").gameObject);
+            }
+            if (mapLayout.ContainsKey(cell.Key + new Vector2Int(0,-1))) { // South 
+                // Remove south door
+                Destroy(r.transform.Find("South_Door").gameObject);
+            }
+
+        }
     }
 
 }

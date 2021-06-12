@@ -37,11 +37,11 @@ public class PlayerController : MonoBehaviour
     void GetKeyboardInput() {
         if (Input.GetKey(KeyCode.W))
         {
-            rb.AddForce(new Vector3(0.0f, 0.0f, speed));
+            rb.AddForce(new Vector3(0.0f, speed, 0.0f));
         }
         if (Input.GetKey(KeyCode.S))
         {
-            rb.AddForce(new Vector3(0.0f, 0.0f, -speed));
+            rb.AddForce(new Vector3(0.0f, -speed, 0.0f));
         }
         if (Input.GetKey(KeyCode.A))
         {

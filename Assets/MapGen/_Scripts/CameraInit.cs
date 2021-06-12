@@ -13,6 +13,8 @@ public class CameraInit : MonoBehaviour
 
     public GameObject cameraHolder; // Parent gameobject that we rotate
     private Camera this_camera;
+    
+    private Vector3 starting_euler_angles;
 
     private float lerp1;
     private float lerp2;
@@ -23,6 +25,7 @@ public class CameraInit : MonoBehaviour
     void Start()
     {
         this_camera = GetComponent<Camera>();
+        starting_euler_angles = cameraHolder.transform.localEulerAngles;
     }
 
     // Update is called once per frame
@@ -45,8 +48,8 @@ public class CameraInit : MonoBehaviour
                     lerp3 += speed * Time.deltaTime;
             }
 
-            cameraHolder.transform.eulerAngles = new Vector3((1-Mathf.Cos(lerp1)) * 45 / 2, (1-Mathf.Cos(lerp2)) * 45 / 2, 0.0f);
-            this_camera.orthographicSize = 5 + (1-Mathf.Cos(lerp3)) * zoom / 2;
+            cameraHolder.transform.localEulerAngles = new Vector3(starting_euler_angles.x - (1-Mathf.Cos(lerp2)) * 45 / 2, starting_euler_angles.y + (1-Mathf.Cos(lerp3)) * 45 / 2, starting_euler_angles.z);
+            this_camera.orthographicSize = 1 + (1-Mathf.Cos(lerp1)) * zoom / 2;
 
         } else wait += 1 * Time.deltaTime;
     }
