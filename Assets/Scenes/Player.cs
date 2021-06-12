@@ -20,6 +20,8 @@ public class Player : MonoBehaviour
     private float m_timeOfLastSuitChange;
     public float m_suitChangeInterval = 0.1f;
     public float m_distanceToGetBackInSuit = 2f;
+
+    //Time spent out of suit progress bar
     public Slider m_outOfSuitProgressBar;
     public float m_maxOutOfSuitTime = 30;
     private float m_outOfSuitTimeLeft;
@@ -27,15 +29,21 @@ public class Player : MonoBehaviour
     public GameObject m_playerBody;
     private Rigidbody m_playerBodyRigidBody;
 
+    public GameObject m_gameOverPanel;
+
     // Start is called before the first frame update
     void Start()
     {
         m_timeOfLastShot = Time.time;
         m_timeOfLastSuitChange = Time.time;
+
         m_rigidBody = GetComponent<Rigidbody>();
         m_playerBodyRigidBody = m_playerBody.GetComponent<Rigidbody>();
+
         m_outOfSuitProgressBar.gameObject.SetActive(false);
         m_outOfSuitTimeLeft = m_maxOutOfSuitTime;
+
+        m_gameOverPanel.SetActive(false);
     }
 
     void Update()
@@ -98,7 +106,7 @@ public class Player : MonoBehaviour
 
             if (m_outOfSuitTimeLeft < 0)
             {
-                //todo die
+                GameOver();
             }
         }
 
@@ -137,6 +145,11 @@ public class Player : MonoBehaviour
                 m_timeOfLastShot = Time.time;
             }
         }
+    }
+
+    private void GameOver()
+    {
+        m_gameOverPanel.SetActive(true);
     }
 
     private void OnTriggerEnter(Collider col)
@@ -194,6 +207,11 @@ public class Player : MonoBehaviour
         }
 
         //todo check if enemy if so lower health/die
+        //Check if gun
+        if (col.gameObject.name.Contains("Enemy"))
+        {
+            GameOver();
+        }
     }
 
     public void addGun(Vector3 position, Gun newGun)
