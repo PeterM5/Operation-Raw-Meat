@@ -154,11 +154,14 @@ public class Player : MonoBehaviour
         Destroy(gun.gameObject);
 
 
+        List<GameObject> connectedGuns;
+
         //Remove disconnected guns
+        /*
         List<GameObject> gunsToRemove = new List<GameObject>();
         foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
-            if (!isConnectedToPlayer(gunAndPosition.Value, 0))
+            if (!isConnectedToPlayer(transform.position + gunAndPosition.Value, 0))
             {
                 Debug.Log("Deleting-----------------------------------------------------------------------");
                 gunsToRemove.Add(gunAndPosition.Key);
@@ -169,9 +172,23 @@ public class Player : MonoBehaviour
         {
             m_guns.Remove(gunToRemove);
             Destroy(gunToRemove);
-        }
+        }*/
     }
 
+    List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position)
+    {
+
+        //todo
+
+
+        if (isGunPosition(position + new Vector3(1.1f, 0, 0)))
+        {
+            if (isConnectedToPlayer(position + new Vector3(1.1f, 0, 0), depth))
+            {
+                return true;
+            }
+        }
+    }
 
     bool isConnectedToPlayer(Vector3 position, int depth)
     {
