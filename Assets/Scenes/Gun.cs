@@ -17,7 +17,7 @@ public class Gun : MonoBehaviour
         Debug.Log(fireLocation);
 
         GameObject newBullet = Instantiate(m_bulletPrefab, transform.position, Quaternion.identity);
-        newBullet.GetComponent<Rigidbody2D>().AddForce(diff * m_bulletSpeed);
+        newBullet.GetComponent<Rigidbody>().AddForce(diff * m_bulletSpeed);
     }
 
     void Start()
