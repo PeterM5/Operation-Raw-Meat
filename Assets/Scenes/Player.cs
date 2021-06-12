@@ -117,7 +117,7 @@ public class Player : MonoBehaviour
 
     public void addGun(Vector3 position, Gun newGun)
     {
-        if (!m_guns.ContainsKey(newGun.gameObject))
+        if (!m_guns.ContainsValue(position))
         {
             m_guns.Add(newGun.gameObject, position);
             newGun.m_bOnGround = false;
