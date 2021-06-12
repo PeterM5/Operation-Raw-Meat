@@ -10,6 +10,9 @@ public class Gun : MonoBehaviour
     public Player m_player;
     public Vector3 m_offset;
 
+    public float m_rotationSpeed = 10;
+    public GameObject m_turret;
+
     public void Shoot(Vector2 fireLocation)
     {
         Vector3 diff = new Vector3(fireLocation.x, fireLocation.y, 0) - transform.position;
@@ -26,7 +29,13 @@ public class Gun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+
+        Vector3 direction = (new Vector3(mousePos.x, mousePos.y) - transform.position).normalized;
+
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+
+        m_turret.transform.rotation = Quaternion.Slerp(m_turret.transform.rotation, lookRotation, Time.deltaTime * m_rotationSpeed);
     }
 
     void OnTriggerEnter(Collider col)
