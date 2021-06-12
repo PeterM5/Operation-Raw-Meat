@@ -8,6 +8,7 @@ public class Gun : MonoBehaviour
     public GameObject m_bulletPrefab;
     public float m_bulletSpeed = 10;
     public Player m_player;
+    public Vector3 m_offset;
 
     public void Shoot(Vector2 fireLocation)
     {
@@ -63,22 +64,26 @@ public class Gun : MonoBehaviour
                 {
                     if (diff.x > 0)//Left
                     {
-                        m_player.addGun(transform.position - m_player.transform.position + new Vector3(-1.3f, 0), gun);
+                        gun.m_offset = m_offset + new Vector3(-1.1f, 0);
+                        m_player.addGun(gun.m_offset, gun);
                     }
                     else//right
                     {
-                        m_player.addGun(transform.position - m_player.transform.position  + new Vector3(1.3f, 0), gun);
+                        gun.m_offset = m_offset + new Vector3(1.1f, 0);
+                        m_player.addGun(gun.m_offset, gun);
                     }
                 }
                 else
                 {
                     if (diff.y > 0)//Below
                     {
-                        m_player.addGun(transform.position - m_player.transform.position + new Vector3(0, -1.3f), gun);
+                        gun.m_offset = m_offset + new Vector3(0, -1.1f);
+                        m_player.addGun(gun.m_offset, gun);
                     }
                     else//top
                     {
-                        m_player.addGun(transform.position - m_player.transform.position + new Vector3(0, 1.3f), gun);
+                        gun.m_offset = m_offset + new Vector3(0, 1.1f);
+                        m_player.addGun(gun.m_offset, gun);
                     }
                 }
             }

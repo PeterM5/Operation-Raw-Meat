@@ -91,22 +91,26 @@ public class Player : MonoBehaviour
                 {
                     if(diff.x > 0)//Left
                     {
-                        addGun(new Vector3(-1.1f, 0), gun);                        
+                        gun.m_offset = new Vector3(-1.1f, 0);
+                        addGun(gun.m_offset, gun);                        
                     }
                     else//right
                     {
-                        addGun(new Vector3(1.1f, 0), gun);                        
+                        gun.m_offset = new Vector3(1.1f, 0);
+                        addGun(gun.m_offset, gun);                        
                     }
                 }
                 else
                 {
                     if (diff.y > 0)//Below
                     {
-                        addGun(new Vector3(0, -1.1f), gun);                        
+                        gun.m_offset = new Vector3(0, -1.1f);
+                        addGun(gun.m_offset, gun);                        
                     }
                     else//top
                     {
-                        addGun(new Vector3(0, 1.1f), gun);
+                        gun.m_offset = new Vector3(0, 1.1f);
+                        addGun(gun.m_offset, gun);
                     }
                 }                
             }
