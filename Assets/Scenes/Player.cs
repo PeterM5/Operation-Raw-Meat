@@ -14,11 +14,22 @@ public class Player : MonoBehaviour
 
     private Rigidbody m_rigidBody;
 
+    //Getting in and out of suit
+    private bool m_bOutOfSuit = false;
+    private float m_timeOfLastSuitChange;
+    public float m_suitChangeInterval = 0.1f;
+    public float m_distanceToGetBackInSuit = 2f;
+
+    public GameObject m_playerBody;
+    private Rigidbody m_playerBodyRigidBody;
+
     // Start is called before the first frame update
     void Start()
     {
         m_timeOfLastShot = Time.time;
+        m_timeOfLastSuitChange = Time.time;
         m_rigidBody = GetComponent<Rigidbody>();
+        m_playerBodyRigidBody = m_playerBody.GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -27,25 +38,71 @@ public class Player : MonoBehaviour
         {
             gunAndPosition.Key.transform.position = transform.position + gunAndPosition.Value;
         }
+
+        if(!m_bOutOfSuit)
+        {
+            m_playerBody.transform.position = transform.position;
+        }
     }
 
     void FixedUpdate()
     {
-        if (Input.GetKey(KeyCode.W))
+        if(!m_bOutOfSuit)
         {
-            m_rigidBody.AddForce(new Vector3(0.0f, m_movementSpeed, 0.0f));
+            if (Input.GetKey(KeyCode.W))
+            {
+                m_rigidBody.AddForce(new Vector3(0.0f, m_movementSpeed, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                m_rigidBody.AddForce(new Vector3(0.0f, -m_movementSpeed, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                m_rigidBody.AddForce(new Vector3(-m_movementSpeed, 0.0f, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                m_rigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
+            }            
         }
-        if (Input.GetKey(KeyCode.S))
+        else
         {
-            m_rigidBody.AddForce(new Vector3(0.0f, -m_movementSpeed, 0.0f));
+            if (Input.GetKey(KeyCode.W))
+            {
+                m_playerBodyRigidBody.AddForce(new Vector3(0.0f, m_movementSpeed, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                m_playerBodyRigidBody.AddForce(new Vector3(0.0f, -m_movementSpeed, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                m_playerBodyRigidBody.AddForce(new Vector3(-m_movementSpeed, 0.0f, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                m_playerBodyRigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
+            }
         }
-        if (Input.GetKey(KeyCode.A))
+
+        //Toggle getting in/out of suit
+        if (Input.GetKey(KeyCode.E) && Time.time > m_timeOfLastSuitChange + m_suitChangeInterval)
         {
-            m_rigidBody.AddForce(new Vector3(-m_movementSpeed, 0.0f, 0.0f));
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            m_rigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
+            if (m_bOutOfSuit)
+            {
+                //Check were close enough to get back in the suit
+                Vector3 distanceBetweenPlayerAndSuit = m_playerBody.transform.position - transform.position;
+                if (distanceBetweenPlayerAndSuit.x < m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.x > -m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.y < m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.y > -m_distanceToGetBackInSuit)
+                {
+                    m_bOutOfSuit = false;
+                }
+            }
+            else
+            {
+                m_bOutOfSuit = true;
+            }            
+            m_timeOfLastSuitChange = Time.time;
         }
 
         if (Input.GetMouseButton(0))
