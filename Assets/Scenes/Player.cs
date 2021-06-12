@@ -154,7 +154,7 @@ public class Player : MonoBehaviour
         Destroy(gun.gameObject);
 
 
-        List<GameObject> connectedGuns;
+        //List<GameObject> connectedGuns;
 
         //Remove disconnected guns
         /*
@@ -175,7 +175,7 @@ public class Player : MonoBehaviour
         }*/
     }
 
-    List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position)
+    /*List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position)
     {
 
         //todo
@@ -280,6 +280,6 @@ public class Player : MonoBehaviour
             }
         }
         return false;
-    }
+    }*/
 
 }
