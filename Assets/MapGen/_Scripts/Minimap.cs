@@ -8,6 +8,11 @@ public class Minimap : MonoBehaviour
     public Sprite room_11;
     public Sprite room_22;
     public void DrawMap(Dictionary<Vector2Int, Room> mapLayout) {
+        // Delete all previously generated map objects
+        var children = new List<GameObject>();
+        foreach (Transform child in transform) children.Add(child.gameObject);
+        children.ForEach(child => DestroyImmediate(child));
+
         RectTransform minimap_rt = GetComponent<RectTransform>();
         float minimap_width = minimap_rt.sizeDelta.x;
         float minimap_height = minimap_rt.sizeDelta.y;
