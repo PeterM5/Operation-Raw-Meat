@@ -188,7 +188,7 @@ public class Player : MonoBehaviour
             return true;
         }
 
-        if (isPlayerPosition(position + new Vector3(0.5f, 0, 0)))
+        if (isPlayerPosition(position + new Vector3(1.1f, 0, 0)))
         {
             return true;
         }
