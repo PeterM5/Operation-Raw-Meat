@@ -87,7 +87,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_bOnGround: 1
   m_bulletPrefab: {fileID: 81391713273509111, guid: 5837bbd9b48749a4a8dcca666b3ddade, type: 3}
-  m_bulletSpeed: 100
+  m_bulletSpeed: 350
   m_player: {fileID: 0}
   m_offset: {x: 0, y: 0, z: 0}
   m_rotationSpeed: 10
