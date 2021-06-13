@@ -25,7 +25,7 @@ public class Gun : MonoBehaviour
         GameObject newBullet = Instantiate(m_bulletPrefab, transform.position, Quaternion.identity);
         newBullet.GetComponent<Rigidbody>().AddForce(diff * m_bulletSpeed);
 
-        m_audioSource.PlayOneShot(m_shootSound, 1);
+        m_audioSource.PlayOneShot(m_shootSound, 0.5f);
     }
 
     void Start()
