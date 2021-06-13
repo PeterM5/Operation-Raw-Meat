@@ -48,7 +48,7 @@ public class CameraInit : MonoBehaviour
                     lerp3 += speed * Time.deltaTime;
             }
 
-            cameraHolder.transform.localEulerAngles = new Vector3(starting_euler_angles.x + (1-Mathf.Cos(lerp2)) * 45 / 2, starting_euler_angles.y + (1-Mathf.Cos(lerp3)) * 45 / 2, starting_euler_angles.z);
+            cameraHolder.transform.localEulerAngles = new Vector3(starting_euler_angles.x - (1-Mathf.Cos(lerp2)) * 45 / 2, starting_euler_angles.y - (1-Mathf.Cos(lerp3)) * 45 / 2, starting_euler_angles.z);
             this_camera.orthographicSize = 1 + (1-Mathf.Cos(lerp1)) * zoom / 2;
 
         } else wait += 1 * Time.deltaTime;
