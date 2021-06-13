@@ -127,12 +127,15 @@ public class Player : MonoBehaviour
                         m_outOfSuitTimeLeft = m_maxOutOfSuitTime;
                         m_outOfSuitProgressBar.value = 1;
                         m_outOfSuitProgressBar.gameObject.SetActive(false);
+                        m_playerBody.GetComponent<BoxCollider>().isTrigger = true;
                     }
                 }
                 else
                 {
                     m_bOutOfSuit = true;
                     m_outOfSuitProgressBar.gameObject.SetActive(true);
+
+                    m_playerBody.GetComponent<BoxCollider>().isTrigger = false;
                 }
                 m_timeOfLastSuitChange = Time.time;
             }
