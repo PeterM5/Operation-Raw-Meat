@@ -9,11 +9,15 @@ public class Bullet : MonoBehaviour
     float m_spawnTime;
     float m_noInteractTime;
 
+    public AudioSource m_audioSource;
+    public AudioClip m_ricochetSound;
+
     // Start is called before the first frame update
     void Start()
     {
         m_spawnTime = Time.time;
         m_noInteractTime = Time.time;
+        m_audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -27,5 +31,10 @@ public class Bullet : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        m_audioSource.PlayOneShot(m_ricochetSound, 0.5f);
     }
 }

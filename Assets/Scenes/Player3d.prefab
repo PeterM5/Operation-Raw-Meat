@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da202fa09ecaf44b99a7a647361f1ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_movementSpeed: 30
+  m_movementSpeed: 18
   m_shotInterval: 0.2
   m_suitChangeInterval: 0.1
   m_distanceToGetBackInSuit: 2
@@ -132,6 +132,7 @@ MonoBehaviour:
   m_maxOutOfSuitTime: 30
   m_playerBody: {fileID: 2146559376969478925}
   m_gameOverPanel: {fileID: 0}
+  m_gunGridGap: 0.8
 --- !u!54 &2146559375728257555
 Rigidbody:
   m_ObjectHideFlags: 0

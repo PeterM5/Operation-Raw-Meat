@@ -2197,7 +2197,7 @@ PrefabInstance:
       objectReference: {fileID: 91415222}
     - target: {fileID: 2146559375728257565, guid: e98211f50e55aee468f47453468efe18, type: 3}
       propertyPath: m_movementSpeed
-      value: 20
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 2146559375728257565, guid: e98211f50e55aee468f47453468efe18, type: 3}
       propertyPath: m_outOfSuitProgressBar
