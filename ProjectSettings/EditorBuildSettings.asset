@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/HubScene.unity
     guid: 6b32724ffc5bb2e42bd2e29d3af07ba6
-  - enabled: 1
+  - enabled: 0
     path: Assets/MapGen/Compiled map gen and player 1.unity
     guid: 1c6bdba5e4f1f464dadd496ed0c3a310
   - enabled: 0
