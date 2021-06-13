@@ -174,7 +174,7 @@ public class MapGen : MonoBehaviour
                     GameObject.Instantiate(enemy, new Vector3(cell.Key.x * 22 + xPos, 2, cell.Key.y * 22 + yPos), new Quaternion(0,0,0,0));
                 }
                 if (Random.Range(0f,1f) > 0.5) {
-                    GameObject.Instantiate(enemy, new Vector3(cell.Key.x * 22, 2, cell.Key.y * 22), new Quaternion(0,0,0,0));
+                    GameObject.Instantiate(gun, new Vector3(cell.Key.x * 22, 2.5f, cell.Key.y * 22), new Quaternion(0,0,0,0));
                 }
             }
             
