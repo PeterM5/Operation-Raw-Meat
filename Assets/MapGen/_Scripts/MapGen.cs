@@ -17,6 +17,7 @@ public class MapGen : MonoBehaviour
     public GameObject[] semimetal_rooms;
 
     public GameObject enemy;
+    public GameObject gun;
 
     public Transform map_parent;
     // Start is called before the first frame update
@@ -164,11 +165,17 @@ public class MapGen : MonoBehaviour
                 room = semimetal_rooms[Random.Range(0,spawn_rooms.GetLength(0))];
             }
             GameObject r = GameObject.Instantiate(room, new Vector3(cell.Key.x * 22, 0.0f, cell.Key.y * 22), room.transform.rotation, map_parent);
-            int enemy_count = (int)Vector2Int.Distance(cell.Key, new Vector2Int(0,0));
-            for (int i=0; i<enemy_count; i++) {
-                int xPos = Random.Range(-8, 8);
-                int yPos = Random.Range(-8, 8);
-                GameObject.Instantiate(enemy, new Vector3(cell.Key.x * 22 + xPos, 2, cell.Key.y * 22 + yPos), new Quaternion(0,0,0,0));
+
+            if (cell.Key.x != 0 && cell.Key.y != 0) {
+                int enemy_count = (int)Vector2Int.Distance(cell.Key, new Vector2Int(0,0));
+                for (int i=0; i<enemy_count; i++) {
+                    int xPos = Random.Range(-8, 8);
+                    int yPos = Random.Range(-8, 8);
+                    GameObject.Instantiate(enemy, new Vector3(cell.Key.x * 22 + xPos, 2, cell.Key.y * 22 + yPos), new Quaternion(0,0,0,0));
+                }
+                if (Random.Range(0f,1f) > 0.5) {
+                    GameObject.Instantiate(enemy, new Vector3(cell.Key.x * 22, 2, cell.Key.y * 22), new Quaternion(0,0,0,0));
+                }
             }
             
             // Check adjacent rooms and remove doors to them
