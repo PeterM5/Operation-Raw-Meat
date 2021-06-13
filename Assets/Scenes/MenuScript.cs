@@ -7,6 +7,6 @@ public class MenuScript : MonoBehaviour
 {
     public void StartGame()
     {
-        SceneManager.LoadScene("Player guns and enemy");
+        SceneManager.LoadScene("Compiled map gen and player 1");
     }
 }
