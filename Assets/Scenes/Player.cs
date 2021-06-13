@@ -142,6 +142,15 @@ public class Player : MonoBehaviour
                 m_timeOfLastSuitChange = Time.time;
             }
 
+            if(Input.GetKey(KeyCode.R))
+            {
+                foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+                {
+                    gunAndPosition.Key.GetComponent<Gun>().m_bOnGround = true;
+                }
+                m_guns.Clear();
+            }
+
             if (Input.GetMouseButton(0))
             {
                 if (Time.time > m_timeOfLastShot + m_shotInterval)
