@@ -135,12 +135,15 @@ public class Player : MonoBehaviour
         {
             if (Time.time > m_timeOfLastShot + m_shotInterval)
             {
-                Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
-
-                foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+                Ray castPoint = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
                 {
-                    gunAndPosition.Key.GetComponent<Gun>().Shoot(mousePos);
-                }
+                    foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+                    {
+                        gunAndPosition.Key.GetComponent<Gun>().Shoot(hit.point);
+                    }
+                }               
 
                 m_timeOfLastShot = Time.time;
             }

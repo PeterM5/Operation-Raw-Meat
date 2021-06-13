@@ -13,9 +13,9 @@ public class Gun : MonoBehaviour
     public float m_rotationSpeed = 10;
     public GameObject m_turret;
 
-    public void Shoot(Vector2 fireLocation)
+    public void Shoot(Vector3 fireLocation)
     {
-        Vector3 diff = new Vector3(fireLocation.x, fireLocation.y, 0) - transform.position;
+        Vector3 diff = fireLocation - transform.position;//().normalized;
 
         GameObject newBullet = Instantiate(m_bulletPrefab, transform.position, Quaternion.identity);
         newBullet.GetComponent<Rigidbody>().AddForce(diff * m_bulletSpeed);
@@ -29,13 +29,22 @@ public class Gun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+        if(!m_bOnGround)
+        {
+            Ray castPoint = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
+            {
+                Vector3 direction = hit.point - transform.position;
+                //direction.z = 0;
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                //lookRotation.x = -90;
+                lookRotation.z = 0;
+                lookRotation.x = 0;
+                //m_turret.transform.rotation = Quaternion.Slerp(m_turret.transform.rotation, lookRotation, Time.deltaTime * m_rotationSpeed);
 
-        Vector3 direction = (new Vector3(mousePos.x, mousePos.y) - transform.position).normalized;
-
-        Quaternion lookRotation = Quaternion.LookRotation(direction);
-
-        m_turret.transform.rotation = Quaternion.Slerp(m_turret.transform.rotation, lookRotation, Time.deltaTime * m_rotationSpeed);
+            }      
+        }
     }
 
     void OnTriggerEnter(Collider col)
