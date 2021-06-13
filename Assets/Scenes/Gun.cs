@@ -15,17 +15,22 @@ public class Gun : MonoBehaviour
 
     public float m_gunGridGap = 0.7f;
 
+    public AudioSource m_audioSource;
+    public AudioClip m_shootSound;
+
     public void Shoot(Vector3 fireLocation)
     {
         Vector3 diff = (fireLocation - transform.position).normalized;
 
         GameObject newBullet = Instantiate(m_bulletPrefab, transform.position, Quaternion.identity);
         newBullet.GetComponent<Rigidbody>().AddForce(diff * m_bulletSpeed);
+
+        m_audioSource.PlayOneShot(m_shootSound, 1);
     }
 
     void Start()
     {
-        
+        m_audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
