@@ -179,7 +179,7 @@ public class Player : MonoBehaviour
             if (gun.m_bOnGround)
             {
                 //Determine the position to pick up
-                Vector2 diff = transform.position - col.gameObject.transform.position;
+                Vector3 diff = transform.position - col.gameObject.transform.position;
 
                 float x = diff.x;
                 if (x < 0)
@@ -187,13 +187,13 @@ public class Player : MonoBehaviour
                     x = diff.x * -1;
                 }
 
-                float y = diff.y;
-                if (y < 0)
+                float z = diff.z;
+                if (z < 0)
                 {
-                    y = diff.y * -1;
+                    z = diff.z * -1;
                 }
 
-                if (x > y)
+                if (x > z)
                 {
                     if (diff.x > 0)//Left
                     {
@@ -208,14 +208,14 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
-                    if (diff.y > 0)//Below
+                    if (diff.z > 0)//Below
                     {
-                        gun.m_offset = new Vector3(0, -m_gunGridGap);
+                        gun.m_offset = new Vector3(0, 0, -m_gunGridGap);
                         addGun(gun.m_offset, gun);
                     }
                     else//top
                     {
-                        gun.m_offset = new Vector3(0, m_gunGridGap);
+                        gun.m_offset = new Vector3(0, 0, m_gunGridGap);
                         addGun(gun.m_offset, gun);
                     }
                 }
@@ -330,7 +330,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        colliders = Physics.OverlapSphere(position + new Vector3(0, m_gunGridGap), 0.5f);
+        colliders = Physics.OverlapSphere(position + new Vector3(0, 0, m_gunGridGap), 0.5f);
         foreach (Collider collider in colliders)
         {
             if (collider.gameObject.name.Contains("Gun"))
@@ -341,12 +341,12 @@ public class Player : MonoBehaviour
                     {
                         connectedGuns.Add(collider.gameObject);
                     }
-                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, m_gunGridGap), deletedGameObject, depth);
+                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, 0, m_gunGridGap), deletedGameObject, depth);
                 }                
             }
         }
 
-        colliders = Physics.OverlapSphere(position + new Vector3(0, -m_gunGridGap), 0.5f);
+        colliders = Physics.OverlapSphere(position + new Vector3(0, 0, -m_gunGridGap), 0.5f);
         foreach (Collider collider in colliders)
         {
             if (collider.gameObject.name.Contains("Gun"))
@@ -357,7 +357,7 @@ public class Player : MonoBehaviour
                     {
                         connectedGuns.Add(collider.gameObject);
                     }
-                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, -m_gunGridGap), deletedGameObject, depth);
+                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, 0, -m_gunGridGap), deletedGameObject, depth);
                 }               
             }
         }
