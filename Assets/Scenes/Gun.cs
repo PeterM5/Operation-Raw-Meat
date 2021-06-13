@@ -33,7 +33,7 @@ public class Gun : MonoBehaviour
         {
             Ray castPoint = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
+            if (Physics.Raycast(castPoint, out hit, 1000))
             {
                 Vector3 direction = hit.point - transform.position;
                 direction.y = 0;
