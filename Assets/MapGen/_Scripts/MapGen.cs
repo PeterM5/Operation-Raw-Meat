@@ -11,7 +11,11 @@ public class MapGen : MonoBehaviour
     public bool autoUpdate;
     private Minimap minimap;
     
-    public GameObject room1;
+    public float distance;
+    public GameObject[] spawn_rooms;
+    public GameObject[] normal_rooms;
+    public GameObject[] semimetal_rooms;
+
 
     public Transform map_parent;
     // Start is called before the first frame update
@@ -147,7 +151,18 @@ public class MapGen : MonoBehaviour
     
     void spawnRoomObjects() {
         foreach(KeyValuePair<Vector2Int, Room> cell in mapLayout) {
-            GameObject r = GameObject.Instantiate(room1, new Vector3(cell.Key.x * 20, cell.Key.y * 20, 0.0f), room1.transform.rotation, map_parent);
+            // Pick room
+            GameObject room;
+            if (cell.Key.x == 0 && cell.Key.y == 0) {
+                room = spawn_rooms[Random.Range(0,spawn_rooms.GetLength(0))];
+            }
+            else if (normal_rooms.GetLength(0) > 0 && Vector2Int.Distance(cell.Key, new Vector2Int(0,0)) < distance) {
+                room = normal_rooms[Random.Range(0,spawn_rooms.GetLength(0))];
+            }
+            else {
+                room = semimetal_rooms[Random.Range(0,spawn_rooms.GetLength(0))];
+            }
+            GameObject r = GameObject.Instantiate(room, new Vector3(cell.Key.x * 22, 0.0f, cell.Key.y * 22), room.transform.rotation, map_parent);
             // Check adjacent rooms and remove doors to them
             if (mapLayout.ContainsKey(cell.Key + new Vector2Int(1,0))) { // East
                 // Remove east door
