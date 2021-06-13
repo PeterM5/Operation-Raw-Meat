@@ -13,6 +13,8 @@ public class Gun : MonoBehaviour
     public float m_rotationSpeed = 10;
     public GameObject m_turret;
 
+    public float m_gunGridGap = 0.7f;
+
     public void Shoot(Vector3 fireLocation)
     {
         Vector3 diff = (fireLocation - transform.position).normalized;
@@ -57,7 +59,7 @@ public class Gun : MonoBehaviour
             if (gun.m_bOnGround)
             {
                 //Determine the position to pick up
-                Vector2 diff = transform.position - col.gameObject.transform.position;
+                Vector3 diff = transform.position - col.gameObject.transform.position;
 
                 float x = diff.x;
                 if (x < 0)
@@ -65,35 +67,35 @@ public class Gun : MonoBehaviour
                     x = diff.x * -1;
                 }
 
-                float y = diff.y;
-                if (y < 0)
+                float z = diff.z;
+                if (z < 0)
                 {
-                    y = diff.y * -1;
+                    z = diff.z * -1;
                 }
 
-                if (x > y)
+                if (x > z)
                 {
                     if (diff.x > 0)//Left
                     {
-                        gun.m_offset = m_offset + new Vector3(-1.1f, 0);
+                        gun.m_offset = m_offset + new Vector3(-m_gunGridGap, 0);
                         m_player.addGun(gun.m_offset, gun);
                     }
                     else//right
                     {
-                        gun.m_offset = m_offset + new Vector3(1.1f, 0);
+                        gun.m_offset = m_offset + new Vector3(m_gunGridGap, 0);
                         m_player.addGun(gun.m_offset, gun);
                     }
                 }
                 else
                 {
-                    if (diff.y > 0)//Below
+                    if (diff.z > 0)//Below
                     {
-                        gun.m_offset = m_offset + new Vector3(0, -1.1f);
+                        gun.m_offset = m_offset + new Vector3(0, -m_gunGridGap);
                         m_player.addGun(gun.m_offset, gun);
                     }
                     else//top
                     {
-                        gun.m_offset = m_offset + new Vector3(0, 1.1f);
+                        gun.m_offset = m_offset + new Vector3(0, m_gunGridGap);
                         m_player.addGun(gun.m_offset, gun);
                     }
                 }
