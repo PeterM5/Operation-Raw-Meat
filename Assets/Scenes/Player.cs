@@ -1,60 +1,148 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     public float m_movementSpeed = 10;
 
     Dictionary<GameObject, Vector3> m_guns = new Dictionary<GameObject, Vector3>();
-    Dictionary<GameObject, BoxCollider2D> m_addtionalColliders = new Dictionary<GameObject, BoxCollider2D>();
+    Dictionary<GameObject, BoxCollider> m_addtionalColliders = new Dictionary<GameObject, BoxCollider>();
 
     float m_timeOfLastShot;
     public float m_shotInterval = 0.05f;
+
+    private Rigidbody m_rigidBody;
+
+    //Getting in and out of suit
+    private bool m_bOutOfSuit = false;
+    private float m_timeOfLastSuitChange;
+    public float m_suitChangeInterval = 0.1f;
+    public float m_distanceToGetBackInSuit = 2f;
+
+    //Time spent out of suit progress bar
+    public Slider m_outOfSuitProgressBar;
+    public float m_maxOutOfSuitTime = 30;
+    private float m_outOfSuitTimeLeft;
+
+    public GameObject m_playerBody;
+    private Rigidbody m_playerBodyRigidBody;
+
+    public GameObject m_gameOverPanel;
 
     // Start is called before the first frame update
     void Start()
     {
         m_timeOfLastShot = Time.time;
+        m_timeOfLastSuitChange = Time.time;
+
+        m_rigidBody = GetComponent<Rigidbody>();
+        m_playerBodyRigidBody = m_playerBody.GetComponent<Rigidbody>();
+
+        m_outOfSuitProgressBar.gameObject.SetActive(false);
+        m_outOfSuitTimeLeft = m_maxOutOfSuitTime;
+
+        m_gameOverPanel.SetActive(false);
+    }
+
+    void Update()
+    {
+        foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+        {
+            gunAndPosition.Key.transform.position = transform.position + gunAndPosition.Value;
+        }
+
+        if(!m_bOutOfSuit)
+        {
+            m_playerBody.transform.position = transform.position;
+        }
     }
 
     void FixedUpdate()
     {
-        Vector3 pos = transform.position;
+        if(!m_bOutOfSuit)
+        {
+            if (Input.GetKey(KeyCode.W))
+            {
+                m_rigidBody.AddForce(new Vector3(0.0f, 0.0f, m_movementSpeed));
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                m_rigidBody.AddForce(new Vector3(0.0f, 0.0f, -m_movementSpeed));
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                m_rigidBody.AddForce(new Vector3(-m_movementSpeed, 0.0f, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                m_rigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
+            }            
+        }
+        else
+        {
+            if (Input.GetKey(KeyCode.W))
+            {
+                m_playerBodyRigidBody.AddForce(new Vector3(0.0f, m_movementSpeed, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                m_playerBodyRigidBody.AddForce(new Vector3(0.0f, -m_movementSpeed, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                m_playerBodyRigidBody.AddForce(new Vector3(-m_movementSpeed, 0.0f, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                m_playerBodyRigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
+            }
 
-        foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
-        {
-            gunAndPosition.Key.transform.position = pos + gunAndPosition.Value;
+            //Calculate remaingn time out of suit
+            m_outOfSuitTimeLeft -= Time.deltaTime;
+            float fractionTimeLeft = (m_outOfSuitTimeLeft / m_maxOutOfSuitTime);
+            m_outOfSuitProgressBar.value = fractionTimeLeft;
+
+            if (m_outOfSuitTimeLeft < 0)
+            {
+                GameOver();
+            }
         }
 
-        if (Input.GetKey("w"))
+        //Toggle getting in/out of suit
+        if (Input.GetKey(KeyCode.E) && Time.time > m_timeOfLastSuitChange + m_suitChangeInterval)
         {
-            pos.y += m_movementSpeed * Time.deltaTime;
+            if (m_bOutOfSuit)
+            {
+                //Check were close enough to get back in the suit
+                Vector3 distanceBetweenPlayerAndSuit = m_playerBody.transform.position - transform.position;
+                if (distanceBetweenPlayerAndSuit.x < m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.x > -m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.y < m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.y > -m_distanceToGetBackInSuit)
+                {
+                    m_bOutOfSuit = false;
+                    m_outOfSuitProgressBar.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                m_bOutOfSuit = true;
+                m_outOfSuitProgressBar.gameObject.SetActive(true);
+            }            
+            m_timeOfLastSuitChange = Time.time;
         }
-        if (Input.GetKey("s"))
-        {
-            pos.y -= m_movementSpeed * Time.deltaTime;
-        }
-        if (Input.GetKey("d"))
-        {
-            pos.x += m_movementSpeed * Time.deltaTime;
-        }
-        if (Input.GetKey("a"))
-        {
-            pos.x -= m_movementSpeed * Time.deltaTime;
-        }
-
-        transform.position = pos;
 
         if (Input.GetMouseButton(0))
         {
             if (Time.time > m_timeOfLastShot + m_shotInterval)
             {
-                Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
-
-                foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+                Ray castPoint = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
                 {
-                    gunAndPosition.Key.GetComponent<Gun>().Shoot(mousePos);
+                    foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+                    {
+                        gunAndPosition.Key.GetComponent<Gun>().Shoot(hit.point);
+                    }
                 }
 
                 m_timeOfLastShot = Time.time;
@@ -62,10 +150,15 @@ public class Player : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    private void GameOver()
+    {
+        m_gameOverPanel.SetActive(true);
+    }
+
+    private void OnTriggerEnter(Collider col)
     {
         //Check if gun
-        if(col.gameObject.name.Contains("gun"))
+        if (col.gameObject.name.Contains("Gun"))
         {
             Gun gun = col.gameObject.GetComponent<Gun>();
 
@@ -89,15 +182,15 @@ public class Player : MonoBehaviour
 
                 if (x > y)
                 {
-                    if(diff.x > 0)//Left
+                    if (diff.x > 0)//Left
                     {
                         gun.m_offset = new Vector3(-1.1f, 0);
-                        addGun(gun.m_offset, gun);                        
+                        addGun(gun.m_offset, gun);
                     }
                     else//right
                     {
                         gun.m_offset = new Vector3(1.1f, 0);
-                        addGun(gun.m_offset, gun);                        
+                        addGun(gun.m_offset, gun);
                     }
                 }
                 else
@@ -105,32 +198,37 @@ public class Player : MonoBehaviour
                     if (diff.y > 0)//Below
                     {
                         gun.m_offset = new Vector3(0, -1.1f);
-                        addGun(gun.m_offset, gun);                        
+                        addGun(gun.m_offset, gun);
                     }
                     else//top
                     {
                         gun.m_offset = new Vector3(0, 1.1f);
                         addGun(gun.m_offset, gun);
                     }
-                }                
+                }
             }
         }
 
         //todo check if enemy if so lower health/die
+        //Check if gun
+        if (col.gameObject.name.Contains("Enemy"))
+        {
+            GameOver();
+        }
     }
 
     public void addGun(Vector3 position, Gun newGun)
     {
-        if (!m_guns.ContainsValue(position))
+        if (!m_guns.ContainsValue(position) && !m_guns.ContainsKey(newGun.gameObject))
         {
             m_guns.Add(newGun.gameObject, position);
             newGun.m_bOnGround = false;
             newGun.m_player = gameObject.GetComponent<Player>();
 
-            newGun.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            newGun.gameObject.GetComponent<BoxCollider>().isTrigger = true;
 
-            BoxCollider2D boxCollider = gameObject.AddComponent<BoxCollider2D>();
-            boxCollider.offset = position;
+            BoxCollider boxCollider = gameObject.AddComponent<BoxCollider>();
+            boxCollider.center = position;
 
             m_addtionalColliders.Add(newGun.gameObject, boxCollider);
         }
@@ -144,7 +242,7 @@ public class Player : MonoBehaviour
         m_guns.Remove(gun.gameObject);
 
         //Destroy extra box collider
-        BoxCollider2D boxCollider;
+        BoxCollider boxCollider;
         if (m_addtionalColliders.TryGetValue(gun.gameObject, out boxCollider))
         {
             Destroy(boxCollider);
@@ -154,132 +252,103 @@ public class Player : MonoBehaviour
         Destroy(gun.gameObject);
 
 
-        //List<GameObject> connectedGuns;
-
         //Remove disconnected guns
-        /*
+        //Get list of connected guns
+        //Check agaisnt entire list of guns
+        //Disconnect non connected guns
+
+        List<GameObject> connectedGuns = getConnectedGuns(new List<GameObject>(), transform.position, gun.gameObject, 0);
         List<GameObject> gunsToRemove = new List<GameObject>();
         foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
         {
-            if (!isConnectedToPlayer(transform.position + gunAndPosition.Value, 0))
-            {
-                Debug.Log("Deleting-----------------------------------------------------------------------");
+            if(!connectedGuns.Contains(gunAndPosition.Key))
+            {                
                 gunsToRemove.Add(gunAndPosition.Key);
-            }          
+            }      
         }
 
         foreach(GameObject gunToRemove in gunsToRemove)
         {
             m_guns.Remove(gunToRemove);
             Destroy(gunToRemove);
-        }*/
-    }
-
-    /*List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position)
-    {
-
-        //todo
-
-
-        if (isGunPosition(position + new Vector3(1.1f, 0, 0)))
-        {
-            if (isConnectedToPlayer(position + new Vector3(1.1f, 0, 0), depth))
-            {
-                return true;
-            }
+            //gunToRemove.GetComponent<Gun>().m_bOnGround = true;            
         }
     }
 
-    bool isConnectedToPlayer(Vector3 position, int depth)
+    List<GameObject> getConnectedGuns(List<GameObject> connectedGuns, Vector3 position, GameObject deletedGameObject, int depth)
     {
         depth++;
-        if (depth > 10)
-        {
-            Debug.Log("Depth error");
-            return false;
-        }
-            
 
-        if (isPlayerPosition(position))
+        if(depth > 10)
         {
-            return true;
+            return connectedGuns;
         }
 
-        if (isPlayerPosition(position + new Vector3(1.1f, 0, 0)))
+        Collider[] colliders = Physics.OverlapSphere(position + new Vector3(1.1f, 0), 0.5f);
+        foreach (Collider collider in colliders)
         {
-            return true;
-        }
-        if (isGunPosition(position + new Vector3(1.1f, 0, 0)))
-        {
-            if (isConnectedToPlayer(position + new Vector3(1.1f, 0, 0), depth))
+            if (collider.gameObject.name.Contains("Gun"))
             {
-                return true;
+                if (collider.gameObject != deletedGameObject)
+                {
+                    if (!connectedGuns.Contains(collider.gameObject))
+                    {
+                        connectedGuns.Add(collider.gameObject);
+                    }
+                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(1.1f, 0), deletedGameObject, depth);
+                }
+                
             }
         }
 
-        if (isPlayerPosition(position + new Vector3(-1.1f, 0, 0)))
+        colliders = Physics.OverlapSphere(position + new Vector3(-1.1f, 0), 0.5f);
+        foreach (Collider collider in colliders)
         {
-            return true;
-        }
-        if (isGunPosition(position + new Vector3(-1.1f, 0, 0)))
-        {
-            if (isConnectedToPlayer(position + new Vector3(-1.1f, 0, 0), depth))
+            if (collider.gameObject.name.Contains("Gun"))
             {
-                return true;
+                if(collider.gameObject != deletedGameObject)
+                {
+                    if (!connectedGuns.Contains(collider.gameObject))
+                    {
+                        connectedGuns.Add(collider.gameObject);
+                    }
+                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(-1.1f, 0), deletedGameObject, depth);
+                }                
             }
         }
 
-        if (isPlayerPosition(position + new Vector3(0, 1.1f, 0)))
+        colliders = Physics.OverlapSphere(position + new Vector3(0, 1.1f), 0.5f);
+        foreach (Collider collider in colliders)
         {
-            return true;
-        }
-        if (isGunPosition(position + new Vector3(0, 1.1f, 0)))
-        {
-            if (isConnectedToPlayer(position + new Vector3(0, 1.1f, 0), depth))
+            if (collider.gameObject.name.Contains("Gun"))
             {
-                return true;
+                if (collider.gameObject != deletedGameObject)
+                {
+                    if (!connectedGuns.Contains(collider.gameObject))
+                    {
+                        connectedGuns.Add(collider.gameObject);
+                    }
+                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, 1.1f), deletedGameObject, depth);
+                }                
             }
         }
 
-        if (isPlayerPosition(position + new Vector3(0, -1.1f, 0)))
+        colliders = Physics.OverlapSphere(position + new Vector3(0, -1.1f), 0.5f);
+        foreach (Collider collider in colliders)
         {
-            return true;
-        }
-        if (isGunPosition(position + new Vector3(0, -1.1f, 0)))
-        {
-            if (isConnectedToPlayer(position + new Vector3(0, -1.1f, 0), depth))
+            if (collider.gameObject.name.Contains("Gun"))
             {
-                return true;
+                if (collider.gameObject != deletedGameObject)
+                {
+                    if (!connectedGuns.Contains(collider.gameObject))
+                    {
+                        connectedGuns.Add(collider.gameObject);
+                    }
+                    connectedGuns = getConnectedGuns(connectedGuns, position + new Vector3(0, -1.1f), deletedGameObject, depth);
+                }               
             }
         }
 
-        return false;
+        return connectedGuns;
     }
-
-    bool isPlayerPosition(Vector3 position)
-    {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.5f);
-        foreach (Collider2D collider in colliders)
-        {
-            if (collider.gameObject.name.Contains("Player"))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool isGunPosition(Vector3 position)
-    {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.5f);
-        foreach (Collider2D collider in colliders)
-        {
-            if (collider.gameObject.name.Contains("gun"))
-            {
-                return true;
-            }
-        }
-        return false;
-    }*/
-
 }

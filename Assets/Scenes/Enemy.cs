@@ -16,7 +16,7 @@ public class Enemy : MonoBehaviour
         
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.name.Contains("Bullet"))
         {
