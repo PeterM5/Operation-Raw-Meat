@@ -31,6 +31,8 @@ public class Player : MonoBehaviour
 
     public GameObject m_gameOverPanel;
 
+    private bool m_bGameOver = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -61,97 +63,103 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(!m_bOutOfSuit)
+        if(!m_bGameOver)
         {
-            if (Input.GetKey(KeyCode.W))
+            if (!m_bOutOfSuit)
             {
-                m_rigidBody.AddForce(new Vector3(0.0f, 0.0f, m_movementSpeed));
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                m_rigidBody.AddForce(new Vector3(0.0f, 0.0f, -m_movementSpeed));
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                m_rigidBody.AddForce(new Vector3(-m_movementSpeed, 0.0f, 0.0f));
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                m_rigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
-            }            
-        }
-        else
-        {
-            if (Input.GetKey(KeyCode.W))
-            {
-                m_playerBodyRigidBody.AddForce(new Vector3(0.0f, m_movementSpeed, 0.0f));
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                m_playerBodyRigidBody.AddForce(new Vector3(0.0f, -m_movementSpeed, 0.0f));
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                m_playerBodyRigidBody.AddForce(new Vector3(-m_movementSpeed, 0.0f, 0.0f));
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                m_playerBodyRigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
-            }
-
-            //Calculate remaingn time out of suit
-            m_outOfSuitTimeLeft -= Time.deltaTime;
-            float fractionTimeLeft = (m_outOfSuitTimeLeft / m_maxOutOfSuitTime);
-            m_outOfSuitProgressBar.value = fractionTimeLeft;
-
-            if (m_outOfSuitTimeLeft < 0)
-            {
-                GameOver();
-            }
-        }
-
-        //Toggle getting in/out of suit
-        if (Input.GetKey(KeyCode.E) && Time.time > m_timeOfLastSuitChange + m_suitChangeInterval)
-        {
-            if (m_bOutOfSuit)
-            {
-                //Check were close enough to get back in the suit
-                Vector3 distanceBetweenPlayerAndSuit = m_playerBody.transform.position - transform.position;
-                if (distanceBetweenPlayerAndSuit.x < m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.x > -m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.y < m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.y > -m_distanceToGetBackInSuit)
+                if (Input.GetKey(KeyCode.W))
                 {
-                    m_bOutOfSuit = false;
-                    m_outOfSuitProgressBar.gameObject.SetActive(false);
+                    m_rigidBody.AddForce(new Vector3(0.0f, 0.0f, m_movementSpeed));
+                }
+                if (Input.GetKey(KeyCode.S))
+                {
+                    m_rigidBody.AddForce(new Vector3(0.0f, 0.0f, -m_movementSpeed));
+                }
+                if (Input.GetKey(KeyCode.A))
+                {
+                    m_rigidBody.AddForce(new Vector3(-m_movementSpeed, 0.0f, 0.0f));
+                }
+                if (Input.GetKey(KeyCode.D))
+                {
+                    m_rigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
                 }
             }
             else
             {
-                m_bOutOfSuit = true;
-                m_outOfSuitProgressBar.gameObject.SetActive(true);
-            }            
-            m_timeOfLastSuitChange = Time.time;
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            if (Time.time > m_timeOfLastShot + m_shotInterval)
-            {
-                Ray castPoint = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-                if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
+                if (Input.GetKey(KeyCode.W))
                 {
-                    foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
-                    {
-                        gunAndPosition.Key.GetComponent<Gun>().Shoot(hit.point);
-                    }
+                    m_playerBodyRigidBody.AddForce(new Vector3(0.0f, 0.0f, m_movementSpeed));
+                }
+                if (Input.GetKey(KeyCode.S))
+                {
+                    m_playerBodyRigidBody.AddForce(new Vector3(0.0f, 0.0f, -m_movementSpeed));
+                }
+                if (Input.GetKey(KeyCode.A))
+                {
+                    m_playerBodyRigidBody.AddForce(new Vector3(-m_movementSpeed, 0.0f, 0.0f));
+                }
+                if (Input.GetKey(KeyCode.D))
+                {
+                    m_playerBodyRigidBody.AddForce(new Vector3(m_movementSpeed, 0.0f, 0.0f));
                 }
 
-                m_timeOfLastShot = Time.time;
+                //Calculate remaingn time out of suit
+                m_outOfSuitTimeLeft -= Time.deltaTime;
+                float fractionTimeLeft = (m_outOfSuitTimeLeft / m_maxOutOfSuitTime);
+                m_outOfSuitProgressBar.value = fractionTimeLeft;
+
+                if (m_outOfSuitTimeLeft < 0)
+                {
+                    GameOver();
+                }
+            }
+
+            //Toggle getting in/out of suit
+            if (Input.GetKey(KeyCode.E) && Time.time > m_timeOfLastSuitChange + m_suitChangeInterval)
+            {
+                if (m_bOutOfSuit)
+                {
+                    //Check were close enough to get back in the suit
+                    Vector3 distanceBetweenPlayerAndSuit = m_playerBody.transform.position - transform.position;
+                    if (distanceBetweenPlayerAndSuit.x < m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.x > -m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.y < m_distanceToGetBackInSuit && distanceBetweenPlayerAndSuit.y > -m_distanceToGetBackInSuit)
+                    {
+                        m_bOutOfSuit = false;
+                        m_outOfSuitTimeLeft = m_maxOutOfSuitTime;
+                        m_outOfSuitProgressBar.value = 1;
+                        m_outOfSuitProgressBar.gameObject.SetActive(false);
+                    }
+                }
+                else
+                {
+                    m_bOutOfSuit = true;
+                    m_outOfSuitProgressBar.gameObject.SetActive(true);
+                }
+                m_timeOfLastSuitChange = Time.time;
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                if (Time.time > m_timeOfLastShot + m_shotInterval)
+                {
+                    Ray castPoint = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hit;
+                    if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
+                    {
+                        foreach (KeyValuePair<GameObject, Vector3> gunAndPosition in m_guns)
+                        {
+                            gunAndPosition.Key.GetComponent<Gun>().Shoot(hit.point);
+                        }
+                    }
+
+                    m_timeOfLastShot = Time.time;
+                }
             }
         }
     }
 
     private void GameOver()
     {
+        m_bGameOver = true;
         m_gameOverPanel.SetActive(true);
     }
 
