@@ -65,11 +65,11 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.W))
             {
-                m_rigidBody.AddForce(new Vector3(0.0f, m_movementSpeed, 0.0f));
+                m_rigidBody.AddForce(new Vector3(0.0f, 0.0f, m_movementSpeed));
             }
             if (Input.GetKey(KeyCode.S))
             {
-                m_rigidBody.AddForce(new Vector3(0.0f, -m_movementSpeed, 0.0f));
+                m_rigidBody.AddForce(new Vector3(0.0f, 0.0f, -m_movementSpeed));
             }
             if (Input.GetKey(KeyCode.A))
             {
@@ -143,7 +143,7 @@ public class Player : MonoBehaviour
                     {
                         gunAndPosition.Key.GetComponent<Gun>().Shoot(hit.point);
                     }
-                }               
+                }
 
                 m_timeOfLastShot = Time.time;
             }

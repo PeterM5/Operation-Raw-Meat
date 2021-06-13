@@ -36,7 +36,7 @@ public class Gun : MonoBehaviour
             if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
             {
                 Vector3 direction = hit.point - transform.position;
-                direction.z = 0;
+                direction.y = 0;
                 Quaternion lookRotation = Quaternion.LookRotation(direction);
                 m_turret.transform.rotation = Quaternion.Slerp(m_turret.transform.rotation, lookRotation, Time.deltaTime * m_rotationSpeed);
             }      
